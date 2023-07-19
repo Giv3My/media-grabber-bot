@@ -1,0 +1,25 @@
+{
+  "name": "media-grabber",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "compile": "npx tsc",
+    "build": "npm run compile",
+    "start": "node ./dist",
+    "start:dev": "nodemon ./src/index.ts"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.12",
+    "telegraf": "^4.12.2"
+  },
+  "devDependencies": {
+    "dotenv": "^16.3.1",
+    "nodemon": "^3.0.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.6"
+  },
+  "keywords": [],
+  "author": "Giv3My",
+  "license": "ISC"
+}
