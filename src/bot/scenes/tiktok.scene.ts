@@ -1,6 +1,6 @@
 import { Markup, Scenes } from 'telegraf';
-import { validateUrl, getVideoData } from '../helpers';
-import { BotContext } from '../bot/types';
+import { validateUrl, getVideoData } from '../../helpers';
+import { BotContext } from '../types';
 
 export const tikTokScene = new Scenes.BaseScene<BotContext>('tiktok');
 
@@ -25,7 +25,7 @@ tikTokScene.on('message', async (ctx) => {
     const isValid = validateUrl(url, 'tiktok');
 
     if (!isValid) {
-      return ctx.reply('Enter a valid url');
+      return ctx.reply('Enter a valid tiktok url');
     }
 
     const data = await getVideoData(ctx.message.text);
@@ -36,7 +36,7 @@ tikTokScene.on('message', async (ctx) => {
       );
     }
 
-    await ctx.replyWithVideo(
+    ctx.replyWithVideo(
       {
         url: data.url,
       },
@@ -47,6 +47,6 @@ tikTokScene.on('message', async (ctx) => {
       }
     );
   } else {
-    return ctx.reply('Enter a valid url');
+    return ctx.reply('Enter a valid tiktok url');
   }
 });

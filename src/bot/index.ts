@@ -1,5 +1,5 @@
 import { Telegraf, session, Scenes } from 'telegraf';
-import { homeScene, tikTokScene } from '../scenes';
+import { homeScene, tikTokScene, instagramScene } from './scenes';
 import { StartCommand, HomeCommand } from './commands';
 import { BotContext } from './types';
 
@@ -8,7 +8,7 @@ export class Bot {
   commands = [StartCommand, HomeCommand];
 
   constructor(private readonly token: string) {
-    const stage = new Scenes.Stage<BotContext>([homeScene, tikTokScene]);
+    const stage = new Scenes.Stage<BotContext>([homeScene, tikTokScene, instagramScene]);
 
     this.bot = new Telegraf<BotContext>(this.token);
     this.bot.use(session());
@@ -17,6 +17,7 @@ export class Bot {
 
   init() {
     this.bot.launch();
+
     for (const command of this.commands) {
       new command(this.bot);
     }

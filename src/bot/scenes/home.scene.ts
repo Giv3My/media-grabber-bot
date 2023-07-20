@@ -1,5 +1,5 @@
 import { Markup, Scenes } from 'telegraf';
-import { BotContext } from '../bot/types';
+import { BotContext } from '../types';
 
 export const homeScene = new Scenes.BaseScene<BotContext>('home');
 
@@ -19,6 +19,10 @@ homeScene.enter((ctx) => {
 
 homeScene.hears('TikTok', (ctx) => {
   ctx.scene.enter('tiktok');
+});
+
+homeScene.hears('Instagram', (ctx) => {
+  ctx.scene.enter('instagram');
 });
 
 homeScene.on('message', (ctx) => {
