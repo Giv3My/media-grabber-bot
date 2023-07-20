@@ -1,8 +1,7 @@
-import { normalizeUrl, getTikTokVideoId } from './index';
+import { getTikTokVideoId } from './index';
 import { TikTokVideoData } from '../../types/tiktok';
 
 export const getVideoData = async (url: string) => {
-  url = await normalizeUrl(url);
   const id = await getTikTokVideoId(url);
 
   if (!id) {

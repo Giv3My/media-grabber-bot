@@ -1,5 +1,5 @@
 import { Markup, Scenes } from 'telegraf';
-import { validateUrl, getVideoData } from '../../helpers';
+import { validateUrl, getVideoData, normalizeUrl } from '../../helpers';
 import { BotContext } from '../types';
 
 export const tikTokScene = new Scenes.BaseScene<BotContext>('tiktok');
@@ -20,15 +20,15 @@ tikTokScene.hears('🔙 Go Back', (ctx) => {
 
 tikTokScene.on('message', async (ctx) => {
   if ('text' in ctx.message) {
-    const url = ctx.message.text;
-
+    let url = ctx.message.text;
     const isValid = validateUrl(url, 'tiktok');
 
     if (!isValid) {
       return ctx.reply('Enter a valid tiktok url');
     }
 
-    const data = await getVideoData(ctx.message.text);
+    url = await normalizeUrl(url);
+    const data = await getVideoData(url);
 
     if (!data) {
       return await ctx.reply(
@@ -44,6 +44,8 @@ tikTokScene.on('message', async (ctx) => {
         width: 240,
         height: 430,
         supports_streaming: true,
+        caption: `[TikTok link](${url})\n\nDownloaded in @${ctx.botInfo.username}`,
+        parse_mode: 'MarkdownV2',
       }
     );
   } else {

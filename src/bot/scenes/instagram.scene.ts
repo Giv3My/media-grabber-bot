@@ -38,11 +38,14 @@ instagramScene.on('message', async (ctx) => {
       );
     }
 
-    ctx.sendMediaGroup(
+    ctx.replyWithMediaGroup(
       data.map((item) => ({
         type: item.type === 'image' ? 'photo' : item.type,
         media: item.url,
-      })) as MediaGroup
+        caption: `[Instagram link](${url})\n\nDownloaded in @${ctx.botInfo.username}`,
+        parse_mode: 'MarkdownV2',
+      })) as MediaGroup,
+      {}
     );
   } else {
     return ctx.reply('Enter a valid instagram link(reel or post)');
