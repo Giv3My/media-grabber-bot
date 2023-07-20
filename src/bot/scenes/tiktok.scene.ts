@@ -36,9 +36,9 @@ tikTokScene.on('message', async (ctx) => {
       );
     }
 
-    ctx.replyWithVideo(
+    await ctx.replyWithVideo(
       {
-        url: data.url,
+        url: data.video.url,
       },
       {
         width: 240,
@@ -46,6 +46,20 @@ tikTokScene.on('message', async (ctx) => {
         supports_streaming: true,
         caption: `[TikTok link](${url})\n\nDownloaded in @${ctx.botInfo.username}`,
         parse_mode: 'MarkdownV2',
+      }
+    );
+
+    ctx.replyWithAudio(
+      {
+        url: data.audio.url,
+      },
+      {
+        title: data.audio.title,
+        duration: data.audio.duration,
+        thumb: {
+          url: data.audio.thumb,
+        },
+        reply_to_message_id: ctx.message.message_id,
       }
     );
   } else {
