@@ -1,7 +1,12 @@
 import { Telegraf } from 'telegraf';
+import { Command } from './base';
 
-export class StartCommand {
+export class StartCommand extends Command {
   constructor(bot: Telegraf) {
+    super(bot);
+  }
+
+  protected handle(bot: Telegraf) {
     bot.start((ctx) => {
       ctx.reply(
         [

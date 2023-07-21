@@ -1,6 +1,7 @@
 import { Telegraf, session, Scenes } from 'telegraf';
-import { homeScene, tikTokScene, instagramScene } from './scenes';
+import { HomeScene, TikTokScene, InstagramScene } from './scenes';
 import {
+  Command,
   StartCommand,
   HelpCommand,
   HomeCommand,
@@ -11,10 +12,13 @@ import { BotContext } from './types';
 
 export class Bot {
   bot: Telegraf<BotContext>;
-  commands = [StartCommand, HelpCommand, HomeCommand, TikTokCommand, InstagramCommand];
+  commands: Command[];
+  scenes = [new HomeScene(), new TikTokScene(), new InstagramScene()].map((item) =>
+    item.getScene()
+  );
 
   constructor(private readonly token: string) {
-    const stage = new Scenes.Stage<BotContext>([homeScene, tikTokScene, instagramScene]);
+    const stage = new Scenes.Stage<BotContext>(this.scenes);
 
     this.bot = new Telegraf<BotContext>(this.token);
     this.bot.use(session());
@@ -24,9 +28,13 @@ export class Bot {
   init() {
     this.bot.launch();
 
-    for (const command of this.commands) {
-      new command(this.bot);
-    }
+    this.commands = [
+      new StartCommand(this.bot),
+      new HelpCommand(this.bot),
+      new HomeCommand(this.bot),
+      new TikTokCommand(this.bot),
+      new InstagramCommand(this.bot),
+    ];
 
     this.bot.on('message', (ctx) => {
       ctx.reply('To start use the bot type /home');

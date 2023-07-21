@@ -1,3 +1,4 @@
+export * from './base';
 export * from './start.command';
 export * from './help.command';
 export * from './home.command';

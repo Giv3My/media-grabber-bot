@@ -1,7 +1,12 @@
-import { Telegraf } from 'telegraf';
+import { Telegraf, Scenes } from 'telegraf';
+import { Command } from './base';
 
-export class HelpCommand {
-  constructor(bot: Telegraf) {
+export class HelpCommand extends Command {
+  constructor(bot: Telegraf | Scenes.BaseScene) {
+    super(bot);
+  }
+
+  protected handle(bot: Telegraf | Scenes.BaseScene) {
     bot.command('help', (ctx) => {
       ctx.reply(
         [
