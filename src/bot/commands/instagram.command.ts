@@ -1,10 +1,10 @@
 import { Telegraf } from 'telegraf';
 import { BotContext } from '../types';
 
-export class HomeCommand {
+export class InstagramCommand {
   constructor(bot: Telegraf<BotContext>) {
-    bot.command('home', (ctx) => {
-      ctx.scene.enter('home');
+    bot.command('instagram', (ctx) => {
+      ctx.scene.enter('instagram');
     });
   }
 }
