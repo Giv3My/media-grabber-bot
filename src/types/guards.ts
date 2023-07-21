@@ -1,4 +1,4 @@
-import { SocialNetworkType } from '../types';
+import { SocialNetworkType } from '.';
 
 export const isTikTokUrl = (
   sociealNetwork: SocialNetworkType

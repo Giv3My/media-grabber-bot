@@ -1,5 +1,5 @@
 import { validateInstgramUrl } from './instagram/validate-instagram-url';
-import { isTikTokUrl } from '../bot/guards';
+import { isTikTokUrl } from '../types/guards';
 import { SocialNetworkType } from '../types';
 
 export const validateUrl = (url: string, socialNetwork: SocialNetworkType) => {
