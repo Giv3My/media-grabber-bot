@@ -1,7 +1,7 @@
 import { SocialNetworkType } from '.';
 
 export const isTikTokUrl = (
-  sociealNetwork: SocialNetworkType
-): sociealNetwork is 'tiktok' => {
-  return sociealNetwork === 'tiktok';
+  socialNetwork: SocialNetworkType
+): socialNetwork is 'tiktok' => {
+  return socialNetwork === 'tiktok';
 };

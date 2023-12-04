@@ -1,8 +1,8 @@
-import ig from 'instagram-url-dl';
+import { instagramGetUrl } from './instagram-get-url';
 
 export const getMediaData = async (url) => {
   try {
-    const data = await ig(url);
+    const data = await instagramGetUrl(url);
 
     return data;
   } catch (e) {
