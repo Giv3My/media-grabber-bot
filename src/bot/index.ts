@@ -1,5 +1,5 @@
 import { Telegraf, session, Scenes } from 'telegraf';
-import { HomeScene, TikTokScene, InstagramScene } from './scenes';
+import { HomeScene, TikTokScene, InstagramScene, YoutubeScene } from './scenes';
 import {
   Command,
   StartCommand,
@@ -7,15 +7,19 @@ import {
   HomeCommand,
   TikTokCommand,
   InstagramCommand,
+  YoutubeCommand,
 } from './commands';
 import { BotContext } from './types';
 
 export class Bot {
   bot: Telegraf<BotContext>;
   commands: Command[];
-  scenes = [new HomeScene(), new TikTokScene(), new InstagramScene()].map((item) =>
-    item.getScene()
-  );
+  scenes = [
+    new HomeScene(),
+    new TikTokScene(),
+    new InstagramScene(),
+    new YoutubeScene(),
+  ].map((item) => item.getScene());
 
   constructor(private readonly token: string) {
     const stage = new Scenes.Stage<BotContext>(this.scenes);
@@ -34,6 +38,7 @@ export class Bot {
       new HomeCommand(this.bot),
       new TikTokCommand(this.bot),
       new InstagramCommand(this.bot),
+      new YoutubeCommand(this.bot),
     ];
 
     this.bot.on('message', (ctx) => {

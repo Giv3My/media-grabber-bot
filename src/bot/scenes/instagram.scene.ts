@@ -1,6 +1,6 @@
 import { Markup, Scenes } from 'telegraf';
 import { Scene } from './base';
-import { HelpCommand, HomeCommand, TikTokCommand } from '../commands';
+import { HelpCommand, HomeCommand, TikTokCommand, YoutubeCommand } from '../commands';
 import { validateUrl, getMediaData } from '../../helpers';
 import { InstagramMediaData } from '../../types/instagram';
 import { MediaGroup } from 'telegraf/typings/telegram-types';
@@ -19,6 +19,7 @@ export class InstagramScene extends Scene {
       new HelpCommand(this.scene),
       new HomeCommand(this.scene),
       new TikTokCommand(this.scene),
+      new YoutubeCommand(this.scene),
     ];
 
     this.handle();
@@ -63,7 +64,7 @@ export class InstagramScene extends Scene {
           {}
         );
       } else {
-        return ctx.reply('Enter a valid instagram link(reel or post)');
+        return ctx.reply('Enter a valid instagram link (reel or post)');
       }
     });
   }

@@ -1,6 +1,6 @@
 import { Markup, Scenes } from 'telegraf';
 import { Scene } from './base';
-import { HelpCommand, HomeCommand, InstagramCommand } from '../commands';
+import { HelpCommand, HomeCommand, InstagramCommand, YoutubeCommand } from '../commands';
 import { validateUrl, getVideoData, normalizeUrl } from '../../helpers';
 import { BotContext } from '../types';
 
@@ -17,6 +17,7 @@ export class TikTokScene extends Scene {
       new HelpCommand(this.scene),
       new HomeCommand(this.scene),
       new InstagramCommand(this.scene),
+      new YoutubeCommand(this.scene),
     ];
 
     this.handle();

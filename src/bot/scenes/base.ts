@@ -11,6 +11,6 @@ export abstract class Scene {
   protected abstract handle(): void;
 
   getScene() {
-    return this.scene
+    return this.scene;
   }
 }
