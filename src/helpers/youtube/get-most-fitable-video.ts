@@ -11,8 +11,18 @@ export const getMostFitableVideo = (videos: ytdl.videoFormat[]) => {
       });
     })
   ).then((videoSizes) => {
-    const { size, index } = videoSizes.sort((a, b) => b.size - a.size).pop()!;
+    const video = videoSizes
+      .sort((a, b) => a.size - b.size)
+      .filter((video) => video.size < 50)
+      .pop();
 
-    return { ...videos[index], size };
+    if (!video) {
+      return null;
+    }
+
+    return {
+      ...videos[video.index],
+      size: video.size,
+    };
   });
 };

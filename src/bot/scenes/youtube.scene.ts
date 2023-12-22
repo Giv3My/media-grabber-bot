@@ -1,8 +1,8 @@
 import { Markup, Scenes } from 'telegraf';
-import * as ytdl from 'ytdl-core';
+import ytdl from 'ytdl-core';
 import { Scene } from './base';
 import { HelpCommand, HomeCommand, InstagramCommand, TikTokCommand } from '../commands';
-import { filterYoutubeVideos, getMostFitableVideo } from '../../helpers';
+import { getMostFitableVideo } from '../../helpers';
 import { BotContext } from '../types';
 
 export class YoutubeScene extends Scene {
@@ -45,10 +45,10 @@ export class YoutubeScene extends Scene {
 
         try {
           const data = await ytdl.getInfo(url);
-          const videos = filterYoutubeVideos(data.formats);
+          const videos = ytdl.filterFormats(data.formats, 'videoandaudio');
           const video = await getMostFitableVideo(videos);
 
-          if (video.size >= 50) {
+          if (!video) {
             return await ctx.reply('This video is too large, try another one');
           }
 
@@ -65,8 +65,6 @@ export class YoutubeScene extends Scene {
             }
           );
         } catch (err) {
-          console.log(err);
-
           return await ctx.reply(
             'An error occurred while processing your request, please try again later'
           );
