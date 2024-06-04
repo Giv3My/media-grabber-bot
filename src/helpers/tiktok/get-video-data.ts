@@ -1,34 +1,55 @@
-import { getTikTokVideoId } from './index';
-import { TikTokVideoData } from '../../types/tiktok';
+import axios from 'axios';
+import cheerio from 'cheerio';
+import { config } from 'dotenv';
+
+config();
 
 export const getVideoData = async (url: string) => {
-  const id = await getTikTokVideoId(url);
-
-  if (!id) {
-    return;
-  }
-
-  const API_URL = `${process.env.TIKTOK_API_URL}/?aweme_id=${id}`;
+  const json = await (
+    await axios.post(
+      process.env.TIKTOK_API_URL!,
+      {
+        q: url,
+        lang: 'ru',
+      },
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data;',
+        },
+      }
+    )
+  ).data;
 
   try {
-    const response = await fetch(API_URL);
-    const data: TikTokVideoData = await response.json();
-    const video = data.aweme_list[0].video;
-    const audio = data.aweme_list[0].music;
+    const $ = cheerio.load(json.data);
+
+    const linkButtons = $('a[onclick="showAd()"]');
+    const thumbnailUrl = $('.thumbnail').find('img').attr('src')!;
+
+    let videoUrl = '',
+      audioUrl = '';
+
+    linkButtons.each((_, linkButton) => {
+      const linkUrl = $(linkButton).attr('href')!;
+      const buttonText = $(linkButton).text().trim();
+
+      if (buttonText.includes('Download MP4 [2]')) {
+        videoUrl = linkUrl;
+      } else if (buttonText.includes('Download MP3')) {
+        audioUrl = linkUrl;
+      }
+    });
 
     return {
-      id,
       video: {
-        url: video.play_addr.url_list[0],
+        url: videoUrl,
       },
       audio: {
-        title: `${audio.author} - ${audio.title}`,
-        duration: audio.duration,
-        url: audio.play_url.uri,
-        thumb: audio.cover_thumb.url_list[0],
+        url: audioUrl,
       },
+      thumb: thumbnailUrl,
     };
   } catch (e) {
-    console.log(e);
+    return null;
   }
 };

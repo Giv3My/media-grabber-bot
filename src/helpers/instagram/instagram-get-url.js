@@ -1,19 +1,20 @@
 import axios from 'axios';
 import cheerio from 'cheerio';
+import { config } from 'dotenv';
+
+config();
 
 export const instagramGetUrl = (url) => {
   return new Promise(async (resolve) => {
     try {
       let json = await (
         await axios.post(
-          'https://saveig.app/api/ajaxSearch',
+          process.env.INSTAGRAM_API_URL,
           require('querystring').stringify({ q: url, t: 'media', lang: 'en' }),
           {
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
               'Accept-Encoding': 'gzip, deflate, br',
-              Origin: 'https://saveig.app/en',
-              Referer: 'https://saveig.app/en',
               'Referrer-Policy': 'strict-origin-when-cross-origin',
               'User-Agent': 'PostmanRuntime/7.31.1',
             },

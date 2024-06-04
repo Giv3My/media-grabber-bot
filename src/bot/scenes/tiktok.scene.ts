@@ -50,32 +50,37 @@ export class TikTokScene extends Scene {
           );
         }
 
-        await ctx.replyWithVideo(
-          {
-            url: data.video.url,
-          },
-          {
-            width: 240,
-            height: 430,
-            supports_streaming: true,
-            caption: `[TikTok link](${url})\n\nDownloaded in @${ctx.botInfo.username}`,
-            parse_mode: 'MarkdownV2',
-          }
-        );
-
-        ctx.replyWithAudio(
-          {
-            url: data.audio.url,
-          },
-          {
-            title: data.audio.title,
-            duration: data.audio.duration,
-            thumb: {
-              url: data.audio.thumb,
+        try {
+          await ctx.replyWithVideo(
+            {
+              url: data.video.url,
             },
-            reply_to_message_id: ctx.message.message_id,
-          }
-        );
+            {
+              width: 240,
+              height: 430,
+              supports_streaming: true,
+              caption: `[TikTok link](${url})\n\nDownloaded in @${ctx.botInfo.username}`,
+              parse_mode: 'MarkdownV2',
+              thumb: {
+                url: data.thumb,
+              },
+            }
+          );
+
+          ctx.replyWithAudio(
+            {
+              url: data.audio.url,
+            },
+            {
+              thumb: {
+                url: data.thumb,
+              },
+              reply_to_message_id: ctx.message.message_id,
+            }
+          );
+        } catch (e) {
+          return ctx.reply(e.response.description);
+        }
       } else {
         return ctx.reply('Enter a valid tiktok url');
       }
