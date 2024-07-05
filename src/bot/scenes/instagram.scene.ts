@@ -2,7 +2,6 @@ import { Markup, Scenes } from 'telegraf';
 import { Scene } from './base';
 import { HelpCommand, HomeCommand, TikTokCommand, YoutubeCommand } from '../commands';
 import { validateUrl, getMediaData } from '../../helpers';
-import { InstagramMediaData } from '../../types/instagram';
 import { MediaGroup } from 'telegraf/typings/telegram-types';
 import { BotContext } from '../types';
 
@@ -27,7 +26,10 @@ export class InstagramScene extends Scene {
 
   protected handle() {
     this.scene.enter((ctx) => {
-      ctx.reply('Input url of the instagram media(video or post)', this.keyboard);
+      ctx.reply(
+        'Input url of the public instagram media(video, post or story)',
+        this.keyboard
+      );
     });
 
     this.scene.hears('🔙 Go Back', (ctx) => {
@@ -41,12 +43,10 @@ export class InstagramScene extends Scene {
         const isValid = validateUrl(url, 'instagram');
 
         if (!isValid) {
-          return ctx.reply('Enter a valid instagram link(reel or post)');
+          return ctx.reply('Enter a valid instagram link(video, post or story)');
         }
 
-        const { data, status } = (await getMediaData(
-          ctx.message.text
-        )) as InstagramMediaData;
+        const { data, status } = await getMediaData(ctx.message.text);
 
         if (!data || !status) {
           return await ctx.reply(
@@ -56,7 +56,7 @@ export class InstagramScene extends Scene {
 
         ctx.replyWithMediaGroup(
           data.map((item) => ({
-            type: item.type === 'image' ? 'photo' : item.type,
+            type: item.type,
             media: item.url,
             caption: `[Instagram link](${url})\n\nDownloaded in @${ctx.botInfo.username}`,
             parse_mode: 'MarkdownV2',
@@ -64,7 +64,7 @@ export class InstagramScene extends Scene {
           {}
         );
       } else {
-        return ctx.reply('Enter a valid instagram link (reel or post)');
+        return ctx.reply('Enter a valid instagram link (video, post or story)');
       }
     });
   }

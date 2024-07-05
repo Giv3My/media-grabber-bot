@@ -33,9 +33,9 @@ export const getVideoData = async (url: string) => {
       const linkUrl = $(linkButton).attr('href')!;
       const buttonText = $(linkButton).text().trim();
 
-      if (buttonText.includes('Download MP4 [2]')) {
+      if (buttonText.includes('MP4 [2]')) {
         videoUrl = linkUrl;
-      } else if (buttonText.includes('Download MP3')) {
+      } else if (buttonText.includes('MP3')) {
         audioUrl = linkUrl;
       }
     });

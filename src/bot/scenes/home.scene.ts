@@ -39,7 +39,7 @@ export class HomeScene extends Scene {
 
   protected handle() {
     this.scene.enter((ctx) => {
-      ctx.reply('Choose from where to download', this.keyboard);
+      ctx.reply('Choose where to download from', this.keyboard);
     });
 
     this.scene.hears('🎬 TikTok', (ctx) => {

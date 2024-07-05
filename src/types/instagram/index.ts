@@ -1,11 +1,6 @@
-export type InstagramMediaType = 'video' | 'image';
+export type InstagramMediaType = 'video' | 'photo';
 
 export interface InstagramMediaItem {
   type: InstagramMediaType;
   url: string;
-}
-
-export interface InstagramMediaData {
-  status: boolean;
-  data: InstagramMediaItem[];
 }
