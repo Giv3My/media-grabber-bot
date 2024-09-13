@@ -46,23 +46,27 @@ export class InstagramScene extends Scene {
           return ctx.reply('Enter a valid instagram link(video, post or story)');
         }
 
-        const { data, status } = await getMediaData(ctx.message.text);
+        try {
+          const { data, status } = await getMediaData(ctx.message.text);
 
-        if (!data || !status) {
-          return await ctx.reply(
+          if (!data || !status) {
+            throw Error;
+          }
+
+          await ctx.replyWithMediaGroup(
+            data.map((item) => ({
+              type: item.type,
+              media: item.url,
+              caption: `[Instagram link](${url})\n\nDownloaded in @${ctx.botInfo.username}`,
+              parse_mode: 'MarkdownV2',
+            })) as MediaGroup,
+            {}
+          );
+        } catch {
+          return ctx.reply(
             'An error occurred while processing your request, please try again later'
           );
         }
-
-        ctx.replyWithMediaGroup(
-          data.map((item) => ({
-            type: item.type,
-            media: item.url,
-            caption: `[Instagram link](${url})\n\nDownloaded in @${ctx.botInfo.username}`,
-            parse_mode: 'MarkdownV2',
-          })) as MediaGroup,
-          {}
-        );
       } else {
         return ctx.reply('Enter a valid instagram link (video, post or story)');
       }

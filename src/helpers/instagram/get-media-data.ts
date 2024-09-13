@@ -1,50 +1,44 @@
 import axios from 'axios';
-import cheerio from 'cheerio';
 import { config } from 'dotenv';
-import { InstagramMediaItem } from '../../types/instagram';
+import { InstagramMediaItem, Response } from '../../types/instagram';
 
 config();
 
 export const getMediaData = async (url: string) => {
-  const json = await (
-    await axios.post(
-      process.env.INSTAGRAM_API_URL!,
-      {
-        q: url,
-        t: 'media',
-        lang: 'en',
-      },
+  try {
+    const { data: response } = await axios.get<Response>(
+      `${process.env.INSTAGRAM_API_URL}?url=${url}`,
       {
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-          'Sec-Ch-Ua-Platform': 'Windows',
+          'x-rapidapi-key': process.env.INSTAGRAM_X_RAPIDAPI_KEY as string,
+          'x-rapidapi-host': process.env.INSTAGRAM_X_RAPIDAPI_HOST as string,
         },
       }
-    )
-  ).data;
+    );
 
-  try {
-    const data: InstagramMediaItem[] = [];
+    let data: InstagramMediaItem[] = [];
 
-    const $ = cheerio.load(json.data);
-    const items = $('.download-box > li');
+    if (response.error) {
+      throw Error;
+    }
 
-    items.each((_, item) => {
-      const linkButton = $(item).find('a');
-      const url = linkButton.attr('href')!;
-      const type = linkButton.attr('title')?.includes('Video') ? 'video' : 'photo'!;
-
+    if (response.type === 'album') {
+      data = response.medias.map<InstagramMediaItem>((media) => ({
+        url: media.download_url,
+        type: media.type === 'image' ? 'photo' : 'video',
+      }));
+    } else {
       data.push({
-        url,
-        type,
+        url: response.download_url,
+        type: response.type === 'image' ? 'photo' : 'video',
       });
-    });
+    }
 
     return {
       data,
       status: true,
     };
-  } catch (e) {
+  } catch {
     return {
       status: false,
     };
