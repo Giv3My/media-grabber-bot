@@ -1,8 +1,9 @@
 import { Markup, Scenes } from 'telegraf';
 import { Scene } from './base';
 import { HelpCommand, HomeCommand, InstagramCommand, YoutubeCommand } from '../commands';
-import { validateUrl, getVideoData, normalizeUrl } from '../../helpers';
+import { validateUrl, getTikTokData, normalizeUrl, chunkArray } from '../../helpers';
 import { BotContext } from '../types';
+import { MediaGroup } from 'telegraf/typings/telegram-types';
 
 export class TikTokScene extends Scene {
   protected keyboard = Markup.keyboard([Markup.button.callback('🔙 Go Back', 'go_back')])
@@ -42,7 +43,7 @@ export class TikTokScene extends Scene {
         }
 
         url = await normalizeUrl(url);
-        const data = await getVideoData(url);
+        const data = await getTikTokData(url);
 
         if (!data) {
           return await ctx.reply(
@@ -50,22 +51,45 @@ export class TikTokScene extends Scene {
           );
         }
 
-        try {
+        const options = {
+          caption: `[TikTok link](${url})\n\nDownloaded in @${ctx.botInfo.username}`,
+          parse_mode: 'MarkdownV2',
+        } as const;
+
+        const handlePhotos = async () => {
+          const mediaChunks = chunkArray(data.images, 10);
+
+          for (const chunk of mediaChunks) {
+            await ctx.replyWithMediaGroup(
+              chunk.map((image) => ({
+                ...options,
+                type: 'photo',
+                media: image,
+              })) as MediaGroup,
+              {}
+            );
+          }
+        };
+
+        const handleVideo = async () => {
           await ctx.replyWithVideo(
             {
               url: data.video.url,
             },
             {
+              ...options,
               width: 240,
               height: 430,
               supports_streaming: true,
-              caption: `[TikTok link](${url})\n\nDownloaded in @${ctx.botInfo.username}`,
-              parse_mode: 'MarkdownV2',
               thumb: {
                 url: data.thumb,
               },
             }
           );
+        };
+
+        try {
+          data.images.length > 0 ? await handlePhotos() : await handleVideo();
 
           ctx.replyWithAudio(
             {
@@ -78,8 +102,10 @@ export class TikTokScene extends Scene {
               reply_to_message_id: ctx.message.message_id,
             }
           );
-        } catch (e) {
-          return ctx.reply(e.response.description);
+        } catch {
+          return ctx.reply(
+            'An error occurred while processing your request, please try again later'
+          );
         }
       } else {
         return ctx.reply('Enter a valid tiktok url');

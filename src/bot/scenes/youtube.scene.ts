@@ -64,8 +64,8 @@ export class YoutubeScene extends Scene {
               parse_mode: 'MarkdownV2',
             }
           );
-        } catch (err) {
-          return await ctx.reply(
+        } catch {
+          return ctx.reply(
             'An error occurred while processing your request, please try again later'
           );
         }

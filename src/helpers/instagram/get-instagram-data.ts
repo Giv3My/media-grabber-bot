@@ -4,7 +4,7 @@ import { InstagramMediaItem, Response } from '../../types/instagram';
 
 config();
 
-export const getMediaData = async (url: string) => {
+export const getInstagramData = async (url: string) => {
   try {
     const { data: response } = await axios.get<Response>(
       `${process.env.INSTAGRAM_API_URL}?url=${url}`,

@@ -1,9 +1,11 @@
 import { Markup, Scenes } from 'telegraf';
+import axios from 'axios';
 import { Scene } from './base';
 import { HelpCommand, HomeCommand, TikTokCommand, YoutubeCommand } from '../commands';
-import { validateUrl, getMediaData } from '../../helpers';
+import { validateUrl, getInstagramData, chunkArray } from '../../helpers';
 import { MediaGroup } from 'telegraf/typings/telegram-types';
 import { BotContext } from '../types';
+import type { InstagramMediaItem } from '../../types/instagram';
 
 export class InstagramScene extends Scene {
   protected keyboard = Markup.keyboard([Markup.button.callback('🔙 Go Back', 'go_back')])
@@ -47,21 +49,37 @@ export class InstagramScene extends Scene {
         }
 
         try {
-          const { data, status } = await getMediaData(ctx.message.text);
+          const { data, status } = await getInstagramData(ctx.message.text);
 
           if (!data || !status) {
             throw Error;
           }
 
-          await ctx.replyWithMediaGroup(
-            data.map((item) => ({
-              type: item.type,
-              media: item.url,
-              caption: `[Instagram link](${url})\n\nDownloaded in @${ctx.botInfo.username}`,
-              parse_mode: 'MarkdownV2',
-            })) as MediaGroup,
-            {}
-          );
+          const getMediaGroup = async (items: InstagramMediaItem[]) => {
+            return Promise.all(
+              items.map(async (item) => {
+                const response = await axios.get(item.url, {
+                  responseType: 'arraybuffer',
+                });
+
+                const buffer = Buffer.from(response.data);
+
+                return {
+                  type: item.type,
+                  media: { source: buffer },
+                  caption: `[Instagram link](${url})\n\nDownloaded in @${ctx.botInfo.username}`,
+                  parse_mode: 'MarkdownV2',
+                };
+              })
+            );
+          };
+
+          const mediaGroup = await getMediaGroup(data);
+          const mediaChunks = chunkArray(mediaGroup, 10);
+
+          for (const chunk of mediaChunks) {
+            await ctx.replyWithMediaGroup(chunk as unknown as MediaGroup, {});
+          }
         } catch {
           return ctx.reply(
             'An error occurred while processing your request, please try again later'

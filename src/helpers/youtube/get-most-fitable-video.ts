@@ -1,4 +1,4 @@
-import * as ytdl from 'ytdl-core';
+import ytdl from 'ytdl-core';
 
 export const getMostFitableVideo = (videos: ytdl.videoFormat[]) => {
   return Promise.all(
