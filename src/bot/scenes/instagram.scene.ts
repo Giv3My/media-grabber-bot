@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Scene } from './base';
 import { HelpCommand, HomeCommand, TikTokCommand, YoutubeCommand } from '../commands';
 import { validateUrl, getInstagramData, chunkArray } from '../../helpers';
-import { MediaGroup } from 'telegraf/typings/telegram-types';
+import { Convenience } from 'telegraf/types';
 import { BotContext } from '../types';
 import type { InstagramMediaItem } from '../../types/instagram';
 
@@ -78,7 +78,7 @@ export class InstagramScene extends Scene {
           const mediaChunks = chunkArray(mediaGroup, 10);
 
           for (const chunk of mediaChunks) {
-            await ctx.replyWithMediaGroup(chunk as unknown as MediaGroup, {});
+            await ctx.replyWithMediaGroup(chunk as Convenience.MediaGroup, {});
           }
         } catch {
           return ctx.reply(

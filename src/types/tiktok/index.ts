@@ -1,5 +1,5 @@
 export interface Response {
-  ok: true;
+  ok: boolean;
   title: string;
   author: string;
   authorName: string;

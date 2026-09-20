@@ -1,16 +1,13 @@
-import * as https from 'https';
+import axios from 'axios';
 import { config } from 'dotenv';
 
 config();
 
-export default () => {
-  const req = https.get(process.env.SERVER_URL!, () => {
+export default async () => {
+  try {
+    await axios.get(process.env.SERVER_URL!);
     console.log('Server was pinged');
-  });
-
-  req.on('error', (error) => {
-    return error;
-  });
-
-  req.end();
+  } catch (err) {
+    return err;
+  }
 };

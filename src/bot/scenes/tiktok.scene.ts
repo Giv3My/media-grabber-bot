@@ -3,7 +3,7 @@ import { Scene } from './base';
 import { HelpCommand, HomeCommand, InstagramCommand, YoutubeCommand } from '../commands';
 import { validateUrl, getTikTokData, normalizeUrl, chunkArray } from '../../helpers';
 import { BotContext } from '../types';
-import { MediaGroup } from 'telegraf/typings/telegram-types';
+import { Convenience } from 'telegraf/types';
 
 export class TikTokScene extends Scene {
   protected keyboard = Markup.keyboard([Markup.button.callback('🔙 Go Back', 'go_back')])
@@ -65,7 +65,7 @@ export class TikTokScene extends Scene {
                 ...options,
                 type: 'photo',
                 media: image,
-              })) as MediaGroup,
+              })) as Convenience.MediaGroup,
               {}
             );
           }
@@ -81,7 +81,7 @@ export class TikTokScene extends Scene {
               width: 240,
               height: 430,
               supports_streaming: true,
-              thumb: {
+              thumbnail: {
                 url: data.thumb,
               },
             }
@@ -96,10 +96,10 @@ export class TikTokScene extends Scene {
               url: data.audio.url,
             },
             {
-              thumb: {
+              thumbnail: {
                 url: data.thumb,
               },
-              reply_to_message_id: ctx.message.message_id,
+              reply_parameters: { message_id: ctx.message.message_id },
             }
           );
         } catch {

@@ -1,12 +1,13 @@
 import { Telegraf } from 'telegraf';
 import { Command } from './base';
+import { BotContext } from '../types';
 
 export class StartCommand extends Command {
-  constructor(bot: Telegraf) {
+  constructor(bot: Telegraf<BotContext>) {
     super(bot);
   }
 
-  protected handle(bot: Telegraf) {
+  protected handle(bot: Telegraf<BotContext>) {
     bot.start((ctx) => {
       ctx.reply(
         [

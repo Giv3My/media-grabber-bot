@@ -8,6 +8,10 @@ export const getTikTokData = async (url: string) => {
   try {
     const { data } = await axios.get<Response>(process.env.TIKTOK_API_URL! + url);
 
+    if (!data.ok) {
+      return null;
+    }
+
     return {
       video: {
         url: data.hdVideoUrl || data.videoUrl,

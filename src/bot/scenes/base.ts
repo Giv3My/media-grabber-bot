@@ -1,16 +1,26 @@
-import { Markup, Scenes } from 'telegraf';
-import { ReplyKeyboardMarkup } from 'telegraf/typings/core/types/typegram';
+import { Scenes } from 'telegraf';
 import { Command } from '../commands';
 import { BotContext } from '../types';
 
 export abstract class Scene {
-  protected scene: Scenes.BaseScene<BotContext>;
-  protected keyboard: Markup.Markup<ReplyKeyboardMarkup>;
-  protected commands: Command[];
+  private _scene: Scenes.BaseScene<BotContext>;
+  private _commands: Command[];
+
+  set scene(scene: Scenes.BaseScene<BotContext>) {
+    this._scene = scene;
+  }
+
+  get scene() {
+    return this._scene;
+  }
+
+  set commands(commands: Command[]) {
+    this._commands = commands;
+  }
+
+  get commands() {
+    return this._commands;
+  }
 
   protected abstract handle(): void;
-
-  getScene() {
-    return this.scene;
-  }
 }

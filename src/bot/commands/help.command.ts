@@ -1,12 +1,13 @@
 import { Telegraf, Scenes } from 'telegraf';
 import { Command } from './base';
+import { BotContext } from '../types';
 
 export class HelpCommand extends Command {
-  constructor(bot: Telegraf | Scenes.BaseScene) {
+  constructor(bot: Telegraf<BotContext> | Scenes.BaseScene<BotContext>) {
     super(bot);
   }
 
-  protected handle(bot: Telegraf | Scenes.BaseScene) {
+  protected handle(bot: Telegraf<BotContext> | Scenes.BaseScene<BotContext>) {
     bot.command('help', (ctx) => {
       ctx.reply(
         [

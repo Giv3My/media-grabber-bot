@@ -13,13 +13,13 @@ import { BotContext } from './types';
 
 export class Bot {
   bot: Telegraf<BotContext>;
-  commands: Command[];
+  commands: Command[] = [];
   scenes = [
     new HomeScene(),
     new TikTokScene(),
     new InstagramScene(),
     new YoutubeScene(),
-  ].map((item) => item.getScene());
+  ].map((item) => item.scene);
 
   constructor(private readonly token: string) {
     const stage = new Scenes.Stage<BotContext>(this.scenes);
