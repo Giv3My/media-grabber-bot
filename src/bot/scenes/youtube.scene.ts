@@ -1,8 +1,13 @@
 import { Markup, Scenes } from 'telegraf';
-import ytdl from 'ytdl-core';
 import { Scene } from './base';
 import { HelpCommand, HomeCommand, InstagramCommand, TikTokCommand } from '../commands';
-import { getMostFitableVideo } from '../../helpers';
+import {
+  extractYtVideoId,
+  getFormatFileSize,
+  getYtClient,
+  getYtVideoFormat,
+  getYtVideoInfo,
+} from '../../helpers/youtube';
 import { BotContext } from '../types';
 
 export class YoutubeScene extends Scene {
@@ -37,28 +42,45 @@ export class YoutubeScene extends Scene {
       if ('text' in ctx.message) {
         const url = ctx.message.text;
 
-        const isValid = ytdl.validateURL(url);
+        const videoId = extractYtVideoId(url);
 
-        if (!isValid) {
+        if (!videoId) {
           return ctx.reply('Enter a valid youtube url');
         }
 
         try {
-          const data = await ytdl.getInfo(url);
-          const videos = ytdl.filterFormats(data.formats, 'videoandaudio');
-          const video = await getMostFitableVideo(videos);
+          const yt = await getYtClient();
+          const videoInfo = await getYtVideoInfo(videoId);
+          const format = getYtVideoFormat(videoInfo);
 
-          if (!video) {
-            return await ctx.reply('This video is too large, try another one');
+          if (!format) {
+            throw new Error('No suitable video format found');
+          }
+
+          const directUrl = await format.decipher(yt.session.player);
+
+          if (!directUrl) {
+            throw new Error("Can't get video stream url");
+          }
+
+          const MAX_BYTES = 20 * 1024 * 1024;
+          const fileSize = await getFormatFileSize(format, directUrl);
+
+          if (!fileSize) {
+            throw new Error("Can't get video file size");
+          }
+
+          if (fileSize > MAX_BYTES) {
+            return ctx.reply('This video is too large, try another one');
           }
 
           ctx.replyWithVideo(
             {
-              url: video.url,
+              url: directUrl,
             },
             {
-              width: video.width,
-              height: video.height,
+              width: format.width ?? 1280,
+              height: format.height ?? 720,
               supports_streaming: true,
               caption: `[Youtube link](${url})\n\nDownloaded in @${ctx.botInfo.username}`,
               parse_mode: 'MarkdownV2',
